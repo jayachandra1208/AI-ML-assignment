@@ -1,17 +1,19 @@
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import json
 import requests
 import time
-import os 
+import os # Import the os module to access environment variables
 
 app = Flask(__name__)
-
+# FIX: Configure CORS to allow requests from all origins with a wildcard.
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 # The base URL for the GROQ API.
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
+# Get the API key from an environment variable for production security.
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 
 def call_groq_api(prompt, max_retries=5, initial_delay=1):
@@ -34,7 +36,7 @@ def call_groq_api(prompt, max_retries=5, initial_delay=1):
                         "content": prompt
                     }
                 ],
-                "model": "llama3-8b-8192"
+                "model": "llama3-8b-8192" # You can choose a different model if you prefer
             }
             
             response = requests.post(

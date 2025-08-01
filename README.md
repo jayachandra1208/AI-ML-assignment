@@ -8,8 +8,6 @@ Generate Follow-up Questions: Dynamically creates 3-5 concise, relevant question
 
 Get Transparency Score: Analyzes your text for clarity and completeness, providing a score from 1 to 10 with a detailed explanation.
 
-Generate Summary: Provides a one-paragraph summary of any text you provide.
-
 Responsive Design: The application's interface is designed to work seamlessly on all devices, from mobile phones to desktops.
 
 Separated Architecture: Built with a distinct frontend and a production-ready backend, allowing for easy maintenance and scalability.

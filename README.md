@@ -135,8 +135,8 @@ Summary:
 The Q4 project plan involves launching a new product line within a six-month timeline and a $500,000 budget. The initiative, led by a team of 10 engineers, will prioritize enhancing user experience and ensuring the product is scalable.
 
 Reflection
-I used AI tools as a collaborator throughout development, leveraging them to write initial code, debug issues like CORS, and draft project documentation. This freed me to focus on the high-level architecture and deployment process.
+Throughout the development process, I treated AI tools as a co-developer — helping with writing the initial code, debugging issues, and even drafting the documentation. This allowed me to focus more on the high-level system architecture and deployment strategy.
 
-The project's design was guided by the principle of separation of concerns. The backend was a lightweight Flask microservice handling all AI logic, while the frontend was a simple, responsive HTML page dedicated to the user interface. This modular approach makes the application easy to deploy and scale.
+I structured the project with a clear separation of concerns to keep things modular and maintainable. The backend was built as a lightweight Flask microservice responsible for all AI-related processing, while the frontend was a simple, responsive HTML interface. This setup made the app easy to scale and deploy.
 
-For product transparency, the "Transparency Score" feature was a deliberate choice. It demonstrates how AI can be used to analyze its own output, providing a window into its reasoning. This was an essential part of the design, aimed at building user trust and providing insight into the AI's capabilities.
+One of the key design choices I made was to include a "Transparency Score" feature. It gives users insight into how the AI is reasoning — essentially letting the AI evaluate and explain its own outputs. I saw this as an important step toward building user trust and showing how AI can be made more interpretable.

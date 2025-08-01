@@ -3,28 +3,29 @@ from flask_cors import CORS
 import json
 import requests
 import time
+import os 
 
 app = Flask(__name__)
-CORS(app)  # Enable Cross-Origin Resource Sharing for the frontend
 
-# The base URL for the Groq API.
+CORS(app, resources={r"/*": {"origins": "*"}})
+
+# The base URL for the GROQ API.
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
-# Groq API key provided by the user.
-GROQ_API_KEY = "YOUR_API_KEY_HERE"
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 
 def call_groq_api(prompt, max_retries=5, initial_delay=1):
     """
-    Calls the Groq API with exponential backoff to handle rate limiting.
+    Calls the GROQ API with exponential backoff to handle rate limiting.
     """
-    if not GROQ_API_KEY or GROQ_API_KEY == "YOUR_API_KEY_HERE":
-        return "An API error occurred: API key is missing. Please add your Groq key to app.py"
+    if not GROQ_API_KEY:
+        return "An API error occurred: API key is missing. Please set the GROQ_API_KEY environment variable."
 
     for i in range(max_retries):
         try:
             headers = {
-                'Content-Type': 'application/json',
-                'Authorization': f'Bearer {GROQ_API_KEY}'
+                'Authorization': f'Bearer {GROQ_API_KEY}',
+                'Content-Type': 'application/json'
             }
             payload = {
                 "messages": [
@@ -33,7 +34,7 @@ def call_groq_api(prompt, max_retries=5, initial_delay=1):
                         "content": prompt
                     }
                 ],
-                "model": "llama3-8b-8192" # Using the Llama 3 8B model
+                "model": "llama3-8b-8192"
             }
             
             response = requests.post(
@@ -41,7 +42,7 @@ def call_groq_api(prompt, max_retries=5, initial_delay=1):
                 headers=headers,
                 data=json.dumps(payload)
             )
-            response.raise_for_status()  # Raise an HTTPError for bad responses (4xx or 5xx)
+            response.raise_for_status()
             result = response.json()
 
             if result.get("choices"):
@@ -79,8 +80,7 @@ def generate_questions():
 @app.route('/transparency-score', methods=['POST'])
 def transparency_score():
     """
-    Optional endpoint to provide a 'transparency score' or validation logic.
-    This simulates a scoring system by asking the LLM to analyze the input.
+    Endpoint to provide a 'transparency score' or validation logic.
     """
     data = request.json
     user_input = data.get('input', '')
@@ -97,5 +97,28 @@ def transparency_score():
     
     return jsonify({"analysis": analysis_result})
 
+@app.route('/generate-summary', methods=['POST'])
+def generate_summary():
+    """
+    Endpoint to generate a concise summary of the input text using GROQ.
+    """
+    data = request.json
+    user_input = data.get('input', '')
+
+    if not user_input:
+        return jsonify({"error": "Input text is required"}), 400
+
+    prompt = f"Provide a one-paragraph summary of the following text:\n\nText: {user_input}"
+    
+    summary_result = call_groq_api(prompt)
+
+    if summary_result.startswith("An API error occurred"):
+        return jsonify({"error": summary_result}), 500
+    
+    return jsonify({"summary": summary_result})
+
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    if GROQ_API_KEY:
+        app.run(debug=True, port=5000)
+    else:
+        print("Please set the GROQ_API_KEY environment variable to run locally.")
